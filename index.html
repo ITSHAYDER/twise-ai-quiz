@@ -127,13 +127,14 @@
                 if (!response.ok) {
                     throw new Error(`Server error: ${response.status}`);
                 }
+                alert("click one time and please wait around 6 seconds")
 
                 const data = await response.json();
                 console.log("API Response:", data);
 
 
 
-                localStorage.setItem("quiz", JSON.stringify(data)); // Store the whole object
+                localStorage.setItem("quiz", JSON.stringify(data)); 
 
                 window.location.href = "quiz.html";
 
