@@ -4,7 +4,7 @@
 
 This application generates quizzes from PDF files using the Gemini Pro API. It classifies the text within the PDF and creates quiz questions in three categories: Multiple Choice Questions (QCM), Yes/No Questions (Oui/Non), and Short Answer Questions (Courte réponse).
 ![Quiz App Screenshot](index.png)
-![result](readme/re.gif) 
+![result](re.gif) 
 
 ## Installation
 
