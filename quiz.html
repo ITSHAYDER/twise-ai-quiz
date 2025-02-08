@@ -52,6 +52,52 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+        button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px; /* Added margin */
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #retour-link{
+            background-color: blue; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px; /* Added margin */
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+        #results-container { /* Style the results container */
+            border: 1px solid #ddd;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+        }
+        #results-container .result { /* Style individual results */
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
@@ -61,12 +107,18 @@
         <button id="submit-button" style="margin-top: 20px;">Submit Quiz</button>
         <div id="results-container" style="display:none; margin-top: 20px;"></div>
         <br>
-        <a href="index.html">Retour</a>
+        <a href="index.html" id="retour-link">Retour</a>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const quizData = localStorage.getItem("quiz");
+            const retourLink = document.getElementById("retour-link");
+            retourLink.addEventListener("click", (event) => {
+                event.preventDefault(); 
+                localStorage.removeItem("quiz"); 
+                window.location.href = "index.html"; 
+            });
             if (!quizData) {
                 document.getElementById("quiz-container").innerHTML = "<p>No quiz data found.</p>";
                 return;
