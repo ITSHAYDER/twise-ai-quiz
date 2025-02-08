@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #120e1d, #2c3e50);
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 20px;
+            border-radius: 15px;
+        }
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .options {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+        .option label {
+            display: block;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Quiz</h1>
+        <div id="quiz-container"></div>
+        <button id="submit-button" style="margin-top: 20px;">Submit Quiz</button>
+        <div id="results-container" style="display:none; margin-top: 20px;"></div>
+        <br>
+        <a href="index.html">Retour</a>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const quizData = localStorage.getItem("quiz");
+            if (!quizData) {
+                document.getElementById("quiz-container").innerHTML = "<p>No quiz data found.</p>";
+                return;
+            }
+
+            const parsedQuiz = JSON.parse(quizData);
+            displayQuiz(parsedQuiz.questions);
+
+            const submitButton = document.getElementById("submit-button");
+            submitButton.addEventListener("click", () => {
+                showResults(parsedQuiz.questions);
+            });
+        });
+
+        function displayQuiz(questions) {
+            const quizContainer = document.getElementById("quiz-container");
+            quizContainer.innerHTML = "";
+
+            if (!questions || !questions.length) {
+                quizContainer.innerHTML = "<p>No questions generated.</p>";
+                return;
+            }
+
+            questions.forEach((questionData, questionIndex) => {
+                const questionElement = document.createElement("div");
+                questionElement.className = "question";
+
+                const questionTitle = document.createElement("p");
+                questionTitle.textContent = `${questionIndex + 1}: ${questionData.question}`;
+                questionElement.appendChild(questionTitle);
+
+                if (questionData.options && questionData.options.length > 0) {
+                    const optionsList = document.createElement("ul");
+                    questionData.options.forEach((option, optionIndex) => {
+                        const optionItem = document.createElement("li");
+
+                        const radio = document.createElement("input");
+                        radio.type = "radio";
+                        radio.id = `question-${questionIndex}-option-${optionIndex}`;
+                        radio.name = `question-${questionIndex}`;
+                        radio.value = option;
+
+                        const label = document.createElement("label");
+                        label.setAttribute("for", radio.id);
+                        label.textContent = option;
+
+                        optionItem.appendChild(radio);
+                        optionItem.appendChild(label);
+                        optionsList.appendChild(optionItem);
+                    });
+                    questionElement.appendChild(optionsList);
+                }
+
+                quizContainer.appendChild(questionElement);
+            });
+        }
+
+        function showResults(questions) {
+            const resultsContainer = document.getElementById("results-container");
+            resultsContainer.innerHTML = "";
+            let score = 0;
+
+            questions.forEach((questionData, questionIndex) => {
+                const questionElement = document.querySelector(`#quiz-container > div:nth-child(${questionIndex + 1})`);
+                const selectedOption = questionElement.querySelector(`input[name="question-${questionIndex}"]:checked`);
+                const resultDiv = document.createElement("div");
+                resultDiv.classList.add("result");
+
+                if (selectedOption) {
+                    const userAnswer = selectedOption.value;
+                    if (userAnswer === questionData.answer) {
+                        resultDiv.textContent = `Question ${questionIndex + 1}: Correct!`;
+                        resultDiv.classList.add("correct");
+                        score++;
+                    } else {
+                        resultDiv.textContent = `Question ${questionIndex + 1}: Incorrect. Correct answer: ${questionData.answer}`;
+                        resultDiv.classList.add("incorrect");
+                    }
+                } else {
+                    resultDiv.textContent = `Question ${questionIndex + 1}: No answer selected. Correct answer: ${questionData.answer}`;
+                    resultDiv.classList.add("incorrect");
+                }
+                questionElement.appendChild(resultDiv);
+            });
+
+            const scoreDiv = document.createElement("div");
+            scoreDiv.classList.add("result");
+            scoreDiv.textContent = `Your score: ${score} / ${questions.length}`;
+            resultsContainer.appendChild(scoreDiv);
+            resultsContainer.style.display = "block";
+        }
+    </script>
+</body>
+</html>

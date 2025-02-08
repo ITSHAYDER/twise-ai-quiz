@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Question Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #120e1d, #2c3e50);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/starry-night.png') repeat;
+            z-index: -1;
+            opacity: 0.2;
+        }
+
+        .container {
+            text-align: center;
+            padding: 50px 40px;
+            background: rgba(0, 0, 0, 0.85);
+            border-radius: 35px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            width: 90%;
+            max-width: 600px;
+            backdrop-filter: blur(12px);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 600;
+            margin-bottom: 35px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.6), 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .button {
+            background: linear-gradient(45deg, #ff00c8, #00c8ff);
+            border: none;
+            color: #fff;
+            padding: 18px 32px;
+            margin: 20px 0;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 50px;
+            width: 100%;
+            max-width: 330px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            background: #222;
+            border: 2px solid #444;
+            color: #fff;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 50px;
+            width: 100%;
+            max-width: 330px;
+        }
+
+        .question-container {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: #eee;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+    <div class="container">
+        <h1 class="title">PDF Question Generator</h1>
+
+        <div class="buttons-container">
+            <label for="file-upload" class="file-label">Choose PDF</label>
+            <input type="file" id="file-upload" class="file-input" accept="application/pdf">
+        </div>
+
+        <button class="button" id="generate-btn" onclick="generateQuestions()">Generate Questions</button>
+        <div class="question-container" id="question-container"></div>
+    </div>
+
+    <script>
+        async function generateQuestions() {
+            const fileInput = document.getElementById("file-upload");
+            const questionContainer = document.getElementById("question-container");
+
+            if (!fileInput.files.length) {
+                alert("Please select a PDF file first!");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            try {
+                const response = await fetch("http://127.0.0.1:5000/generate-quiz", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("API Response:", data);
+
+
+
+                localStorage.setItem("quiz", JSON.stringify(data)); // Store the whole object
+
+                window.location.href = "quiz.html";
+
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Failed to generate questions. Check the console for details.");
+            }
+        }
+    </script>
+</body>
+</html>
